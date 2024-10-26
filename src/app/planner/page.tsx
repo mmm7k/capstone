@@ -186,7 +186,7 @@ export default function Planner() {
 
     return (
       <div className="flex w-screen h-[calc(100vh-4rem)] mt-[4rem] bg-[#151825]">
-        {/* Left side: Travel result */}
+        {/* Left 결과 */}
         <div className="flex flex-col items-center justify-center w-3/4 p-8">
           <span className="text-[#00c395] text-xl">
             Your Personalized Travel Itinerary
@@ -215,11 +215,11 @@ export default function Planner() {
           </div>
         </div>
 
-        {/* Right side: Chat section */}
+        {/* Right 챗 */}
         <div className="w-1/4 p-4 border-l border-gray-700 flex flex-col justify-between">
           <h2 className="text-[#00c395] text-lg mb-4">Travel Plan Chat</h2>
 
-          {/* Chat messages with loading spinner */}
+          {/* Chat, Loading*/}
           <div className="flex-grow overflow-y-auto space-y-2">
             {chatResult.map((chat, index) => (
               <div
@@ -235,7 +235,7 @@ export default function Planner() {
               </div>
             )}
           </div>
-          {/* Input field at the bottom */}
+          {/* Input */}
           <div className="relative flex items-center mt-4">
             <input
               type="text"

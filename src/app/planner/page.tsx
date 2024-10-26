@@ -13,6 +13,8 @@ import { DateRange } from 'react-day-picker';
 import CircularProgress from '@mui/material/CircularProgress';
 import { useToast } from '@/components/ui/use-toast';
 import { ToastAction } from '@/components/ui/Toast';
+import { LuSend } from 'react-icons/lu';
+import { IoChatbubbleEllipsesOutline } from 'react-icons/io5';
 
 interface InputValues {
   age: string;
@@ -41,6 +43,10 @@ export default function Planner() {
   const [errors, setErrors] = useState<Errors>({});
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<string | null>(null);
+  const [chatResult, setChatResult] = useState<string[]>([]);
+  const [chatLoading, setChatLoading] = useState(false);
+  const [isChatOpen, setIsChatOpen] = useState(false);
+
   const { toast } = useToast();
   const countries = [
     '프랑스',
@@ -118,6 +124,30 @@ export default function Planner() {
     }
   };
 
+  const handleChatSendClick = async (newMessage: string) => {
+    if (!newMessage.trim()) return; // 빈 메시지는 처리하지 않음
+
+    // 항상 처음 계획(result) 포함, chatResult 마지막 항목과 newMessage를 결합
+    const prompt = `${result}\n${chatResult.length > 0 ? chatResult[chatResult.length - 1] : ''}\n${newMessage}`;
+    setChatLoading(true);
+    try {
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ prompt }),
+      });
+
+      const data = await response.json();
+      setChatResult((prevChat) => [...prevChat, data.result]);
+    } catch (error) {
+      console.error('Chat API 요청 중 오류 발생:', error);
+    } finally {
+      setChatLoading(false);
+    }
+  };
+
   // 되돌아가기 눌렀을때 사용
   const resetForm = () => {
     setInputValues({
@@ -128,6 +158,7 @@ export default function Planner() {
     });
     setDateRange(undefined);
     setErrors({});
+    setChatResult([]);
     setResult(null);
   };
 
@@ -154,31 +185,83 @@ export default function Planner() {
     };
 
     return (
-      <div className="flex flex-col items-center justify-center w-screen h-[calc(100vh-4rem)] mt-[4rem] bg-[#151825]">
-        <span className="text-[#00c395] text-xl">
-          Your Personalized Travel Itinerary
-        </span>
-        <span className="text-white text-3xl mb-6 mt-2">
-          당신에게 추천하는 여행 계획입니다 😉
-        </span>
-        <div className="w-[60%] lg:w-[50%] flex justify-center pt-6 mb-6 bg-[#1F2232] rounded-lg overflow-y-auto">
-          <div className="text-white text-base whitespace-pre-wrap ">
-            📆 {result}
+      <div className="flex w-screen h-[calc(100vh-4rem)] mt-[4rem] bg-[#151825]">
+        {/* Left side: Travel result */}
+        <div className="flex flex-col items-center justify-center w-3/4 p-8">
+          <span className="text-[#00c395] text-xl">
+            Your Personalized Travel Itinerary
+          </span>
+          <span className="text-white text-3xl mb-6 mt-2">
+            당신에게 추천하는 여행 계획입니다 😉
+          </span>
+          <div className="w-[60%] lg:w-[50%] flex justify-center pt-6 mb-6 bg-[#1F2232] rounded-lg overflow-y-auto">
+            <div className="text-white text-base whitespace-pre-wrap ">
+              📆 {result}
+            </div>
+          </div>
+          <div className="flex space-x-4">
+            <button
+              onClick={resetForm}
+              className="bg-[#00C395] text-base text-white px-4 py-2 rounded-lg mb-6 hover:bg-[#00b389de]"
+            >
+              되돌아가기
+            </button>
+            <button
+              onClick={copyToClipboard}
+              className="bg-[#00C395] text-base text-white px-4 py-2 rounded-lg mb-6 hover:bg-[#00b389de]"
+            >
+              일정복사
+            </button>
           </div>
         </div>
-        <div className="flex space-x-4">
-          <button
-            onClick={resetForm}
-            className="bg-[#00C395] text-base text-white px-4 py-2 rounded-lg mb-6 hover:bg-[#00b389de]"
-          >
-            되돌아가기
-          </button>
-          <button
-            onClick={copyToClipboard}
-            className="bg-[#00C395] text-base text-white px-4 py-2 rounded-lg mb-6 hover:bg-[#00b389de]"
-          >
-            일정복사
-          </button>
+
+        {/* Right side: Chat section */}
+        <div className="w-1/4 p-4 border-l border-gray-700 flex flex-col justify-between">
+          <h2 className="text-[#00c395] text-lg mb-4">Travel Plan Chat</h2>
+
+          {/* Chat messages with loading spinner */}
+          <div className="flex-grow overflow-y-auto space-y-2">
+            {chatResult.map((chat, index) => (
+              <div
+                key={index}
+                className="bg-[#1F2232] p-4 rounded-lg text-white text-base whitespace-pre-wrap"
+              >
+                {chat}
+              </div>
+            ))}
+            {chatLoading && (
+              <div className="flex justify-center my-4">
+                <CircularProgress style={{ color: '#00C395' }} />
+              </div>
+            )}
+          </div>
+          {/* Input field at the bottom */}
+          <div className="relative flex items-center mt-4">
+            <input
+              type="text"
+              placeholder="수정 사항을 입력하세요"
+              className="w-full p-3 rounded-lg bg-[#1F2232] text-white"
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && e.currentTarget.value.trim()) {
+                  handleChatSendClick(e.currentTarget.value.trim());
+                  e.currentTarget.value = '';
+                }
+              }}
+            />
+            <LuSend
+              size={25}
+              className="cursor-pointer text-[#b8b8b8] absolute right-3 md:block hidden"
+              onClick={() => {
+                const inputElement = document.querySelector(
+                  'input[type="text"]',
+                ) as HTMLInputElement;
+                if (inputElement && inputElement.value.trim()) {
+                  handleChatSendClick(inputElement.value.trim());
+                  inputElement.value = '';
+                }
+              }}
+            />
+          </div>
         </div>
       </div>
     );

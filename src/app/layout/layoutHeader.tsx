@@ -2,10 +2,11 @@
 
 import { Manrope } from 'next/font/google';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { FiMenu, FiX } from 'react-icons/fi';
-
+import Image from 'next/image';
+import { Router } from 'lucide-react';
 const roboto = Manrope({
   weight: '400',
   subsets: ['latin'],
@@ -13,6 +14,7 @@ const roboto = Manrope({
 
 export default function LayoutHeader() {
   const pathname = usePathname();
+  const router = useRouter();
   const [scroll, setScroll] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -78,6 +80,16 @@ export default function LayoutHeader() {
               Planner
             </div>
           </Link>
+
+          <Image
+            src="/kakaoLogin.png"
+            alt="kakao login"
+            width={50}
+            height={50}
+            onClick={() => {
+              router.push('http://api.chosun.life:8080/vi/oauth/kakao');
+            }}
+          />
         </nav>
         <button
           className="sm:hidden"
@@ -124,7 +136,7 @@ export default function LayoutHeader() {
         </Link>
         <Link href="/planner">
           <div
-            className={`cursor-pointer py-2 text-xl ${
+            className={`cursor-pointer py-2 text-xl mb-3 ${
               pathname === '/planner'
                 ? 'text-white border-b-[1.5px] border-[#00C395]'
                 : 'text-[#c8c8c8]'
@@ -134,6 +146,16 @@ export default function LayoutHeader() {
             Planner
           </div>
         </Link>
+
+        <Image
+          src="/kakaoLogin.png"
+          alt="kakao login"
+          width={50}
+          height={50}
+          onClick={() => {
+            router.push('http://api.chosun.life:8080/vi/oauth/kakao');
+          }}
+        />
       </nav>
       <style jsx>{`
         .shadow-custom {

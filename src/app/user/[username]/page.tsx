@@ -40,10 +40,16 @@ export default function TripPage() {
   });
 
   if (isLoading)
-    return <div className="text-center mt-8 text-white">Loading...</div>;
+    return (
+      <div className="p-8 bg-[#151825] text-white min-h-screen pt-[10dvh] ">
+        Loading...
+      </div>
+    );
   if (isError)
     return (
-      <div className="text-red-500 text-center mt-8">Error loading data.</div>
+      <div className="p-8 bg-[#151825] text-white min-h-screen pt-[10dvh]">
+        Error loading data.
+      </div>
     );
 
   return (

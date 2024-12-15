@@ -6,6 +6,7 @@ import * as yup from 'yup';
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/store/userstore';
 import api from '@/lib/axiosInstance';
+import { Link } from 'lucide-react';
 
 const loginSchema = yup.object({
   username: yup
@@ -110,6 +111,13 @@ export default function LoginPage() {
           >
             {isSubmitting ? '로그인 중...' : '로그인'}
           </button>
+
+          {/* 회원가입 버튼 */}
+          <Link href="/signup">
+            <button className="w-full px-4 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600 ">
+              회원가입
+            </button>
+          </Link>
         </form>
       </div>
     </div>

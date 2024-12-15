@@ -3,10 +3,11 @@
 import { Manrope } from 'next/font/google';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { FiMenu, FiX } from 'react-icons/fi';
 import Image from 'next/image';
-import { Router } from 'lucide-react';
+import { useAuthStore } from '@/store/userstore';
+
 const roboto = Manrope({
   weight: '400',
   subsets: ['latin'],
@@ -17,6 +18,9 @@ export default function LayoutHeader() {
   const router = useRouter();
   const [scroll, setScroll] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+
+  // Zustand의 상태를 메모이제이션으로 감싸 렌더링 최적화
+  const username = useMemo(() => useAuthStore.getState().username, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -30,7 +34,7 @@ export default function LayoutHeader() {
   }, []);
 
   const toggleMenu = () => {
-    setMenuOpen(!menuOpen);
+    setMenuOpen((prev) => !prev);
   };
 
   return (
@@ -81,15 +85,36 @@ export default function LayoutHeader() {
             </div>
           </Link>
 
-          <Image
-            src="/kakaoLogin.png"
-            alt="kakao login"
-            width={50}
-            height={50}
-            onClick={() => {
-              router.push('http://api.chosun.life:8080/vi/oauth/kakao');
-            }}
-          />
+          {/* 유저네임 표시 */}
+          {username ? (
+            <Link href={`/user/${username}`}>
+              <div className="text-[#c8c8c8] cursor-pointer">{username}</div>
+            </Link>
+          ) : (
+            <>
+              <Link href="/login">
+                <div
+                  className={`cursor-pointer ${
+                    pathname === '/login'
+                      ? 'text-white border-b-[3px] border-[#00C395] pb-1'
+                      : 'text-[#c8c8c8]'
+                  }`}
+                >
+                  Login
+                </div>
+              </Link>
+              <Image
+                src="/kakaoLogin.png"
+                alt="kakao login"
+                width={50}
+                height={50}
+                onClick={() => {
+                  router.push('http://api.chosun.life:8000/api/kakao/login/');
+                }}
+                style={{ cursor: 'pointer' }}
+              />
+            </>
+          )}
         </nav>
         <button
           className="sm:hidden"
@@ -103,71 +128,6 @@ export default function LayoutHeader() {
           )}
         </button>
       </div>
-      <nav
-        className={`sm:hidden overflow-hidden transition-all duration-300 ease-in-out ${
-          menuOpen
-            ? 'max-h-64 opacity-100 visible'
-            : 'max-h-0 opacity-0 invisible'
-        } bg-[#151825] px-10 pb-4`}
-      >
-        <Link href="/">
-          <div
-            className={`cursor-pointer py-2 text-xl ${
-              pathname === '/'
-                ? 'text-white border-b-[1.5px] border-[#00C395]'
-                : 'text-[#c8c8c8]'
-            }`}
-            onClick={() => setMenuOpen(false)}
-          >
-            Home
-          </div>
-        </Link>
-        <Link href="/countries/france">
-          <div
-            className={`cursor-pointer py-2 text-xl ${
-              pathname.startsWith('/countries')
-                ? 'text-white border-b-[1.5px] border-[#00C395]'
-                : 'text-[#c8c8c8]'
-            }`}
-            onClick={() => setMenuOpen(false)}
-          >
-            Countries
-          </div>
-        </Link>
-        <Link href="/planner">
-          <div
-            className={`cursor-pointer py-2 text-xl mb-3 ${
-              pathname === '/planner'
-                ? 'text-white border-b-[1.5px] border-[#00C395]'
-                : 'text-[#c8c8c8]'
-            }`}
-            onClick={() => setMenuOpen(false)}
-          >
-            Planner
-          </div>
-        </Link>
-
-        <Image
-          src="/kakaoLogin.png"
-          alt="kakao login"
-          width={50}
-          height={50}
-          onClick={() => {
-            router.push('http://api.chosun.life:8080/vi/oauth/kakao');
-          }}
-        />
-      </nav>
-      <style jsx>{`
-        .shadow-custom {
-          box-shadow:
-            0 2px 6px -1px rgba(255, 255, 255, 0.1),
-            0 1px 4px -1px rgba(255, 255, 255, 0.06);
-        }
-
-        .transition-max-height {
-          transition: max-height 0.5s ease-in-out;
-        }
-      `}</style>
     </header>
   );
 }

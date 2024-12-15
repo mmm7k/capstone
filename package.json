@@ -11,6 +11,8 @@
   "dependencies": {
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.5",
+    "@hookform/resolvers": "^3.9.1",
+    "@mui/icons-material": "^6.2.0",
     "@mui/material": "^5.16.1",
     "@radix-ui/react-popover": "^1.1.1",
     "@radix-ui/react-select": "^2.1.1",
@@ -35,6 +37,7 @@
     "react-day-picker": "^8.10.1",
     "react-dom": "^18.3.1",
     "react-globe.gl": "^2.27.2",
+    "react-hook-form": "^7.54.1",
     "react-icons": "^5.2.1",
     "react-slick": "^0.30.2",
     "react-world-flags": "^1.6.0",
@@ -42,7 +45,10 @@
     "tailwind-merge": "^2.4.0",
     "tailwindcss-animate": "^1.0.7",
     "three": "^0.165.0",
-    "uuid": "^10.0.0"
+    "uuid": "^10.0.0",
+    "yup": "^1.5.0",
+    "zustand": "^5.0.2",
+    "zustand-persist": "^0.4.0"
   },
   "devDependencies": {
     "@types/node": "^20",

@@ -15,6 +15,7 @@ import { useToast } from '@/components/ui/use-toast';
 import { ToastAction } from '@/components/ui/Toast';
 import { LuSend } from 'react-icons/lu';
 import { IoChatbubbleEllipsesOutline } from 'react-icons/io5';
+import api from '@/lib/axiosInstance';
 
 interface InputValues {
   age: string;
@@ -162,6 +163,28 @@ export default function Planner() {
     setResult(null);
   };
 
+  const handleSaveSchedule = async () => {
+    if (!result) {
+      alert('저장할 일정이 없습니다.');
+      return;
+    }
+
+    try {
+      const response = await api.post('/api/trip/', {
+        content: result,
+      });
+
+      if (response.status === 201 || response.status === 200) {
+        alert('여행 일정이 성공적으로 저장되었습니다.');
+      } else {
+        alert('일정 저장에 실패했습니다. 다시 시도해주세요.');
+      }
+    } catch (error) {
+      console.error('일정 저장 중 오류 발생:', error);
+      alert('네트워크 오류 또는 접근 권한이 만료되었습니다.');
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center w-screen h-screen bg-[#151825]">
@@ -211,6 +234,12 @@ export default function Planner() {
               className="bg-[#00C395] text-base text-white px-4 py-2 rounded-lg mb-6 hover:bg-[#00b389de]"
             >
               일정복사
+            </button>
+            <button
+              onClick={handleSaveSchedule}
+              className="bg-[#00C395] text-base text-white px-4 py-2 rounded-lg mb-6 hover:bg-[#00b389de]"
+            >
+              일정저장
             </button>
           </div>
         </div>

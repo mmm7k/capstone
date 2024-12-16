@@ -109,7 +109,7 @@ export default function LayoutHeader() {
                 width={50}
                 height={50}
                 onClick={() => {
-                  router.push('http://api.chosun.life:8000/api/kakao/login/');
+                  router.push('https://api.chosun.life:8000/api/kakao/login/');
                 }}
                 style={{ cursor: 'pointer' }}
               />

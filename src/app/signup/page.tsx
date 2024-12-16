@@ -52,7 +52,7 @@ export default function SignupPage() {
     setLoading(true);
     try {
       const response = await axios.post(
-        'http://api.chosun.life:8000/api/register/',
+        'https://api.chosun.life:8000/api/register/',
         data,
       );
       alert('회원가입 성공!');

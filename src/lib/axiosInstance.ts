@@ -69,7 +69,7 @@ api.interceptors.response.use(
         }
 
         const { data } = await axios.post(
-          'http://api.chosun.life:8000/api/token/refresh/',
+          'https://api.chosun.life:8000/api/token/refresh/',
           { refresh: refreshToken },
         );
 

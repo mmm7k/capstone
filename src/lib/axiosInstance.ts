@@ -2,7 +2,7 @@ import { useAuthStore } from '@/store/userstore';
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'http://api.chosun.life:8000/',
+  baseURL: 'https://api.chosun.life:8000/',
   headers: {
     'Content-Type': 'application/json',
   },
